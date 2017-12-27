@@ -30,9 +30,18 @@ class GetTransactionsToApproveCommand(FilterCommand):
 
 class GetTransactionsToApproveRequestFilter(RequestFilter):
   def __init__(self):
-    super(GetTransactionsToApproveRequestFilter, self).__init__({
-      'depth': f.Required | f.Type(int) | f.Min(1),
-    })
+    super(GetTransactionsToApproveRequestFilter, self).__init__(
+      {
+        'depth': f.Required | f.Type(int) | f.Min(1),
+      },
+
+      # TODO: How do I apply a filter for `reference` when it exists but skip
+      # it AND ensure that the resulting `request` doesn't have `reference` set
+      # to None? Right now just trust that the value passed in is correct...
+      allow_extra_keys = {
+        'reference',
+      },
+    )
 
 
 class GetTransactionsToApproveResponseFilter(ResponseFilter):

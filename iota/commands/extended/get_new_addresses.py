@@ -40,7 +40,7 @@ class GetNewAddressesCommand(FilterCommand):
     seed            = request['seed'] # type: Seed
 
     return {
-      'addresses': 
+      'addresses':
          self._find_addresses(seed, index, count, security_level, checksum),
     }
 

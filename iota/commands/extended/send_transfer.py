@@ -38,6 +38,7 @@ class SendTransferCommand(FilterCommand):
     min_weight_magnitude  = request['minWeightMagnitude'] # type: int
     seed                  = request['seed'] # type: Seed
     transfers             = request['transfers'] # type: List[ProposedTransaction]
+    options               = request['options']
 
     pt_response = PrepareTransferCommand(self.adapter)(
       changeAddress   = change_address,
@@ -50,6 +51,7 @@ class SendTransferCommand(FilterCommand):
       depth               = depth,
       minWeightMagnitude  = min_weight_magnitude,
       trytes              = pt_response['trytes'],
+      options             = options,
     )
 
     return {
@@ -82,10 +84,14 @@ class SendTransferRequestFilter(RequestFilter):
         # Note that ``inputs`` is allowed to be an empty array.
         'inputs':
           f.Array | f.FilterRepeater(f.Required | Trytes(result_type=Address)),
+
+        'options':
+          f.Type(dict),
       },
 
       allow_missing_keys = {
         'changeAddress',
         'inputs',
+        'options',
       },
     )

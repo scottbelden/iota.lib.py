@@ -36,10 +36,19 @@ class SendTrytesCommand(FilterCommand):
     depth                 = request['depth'] # type: int
     min_weight_magnitude  = request['minWeightMagnitude'] # type: int
     trytes                = request['trytes'] # type: List[TryteString]
+    options               = request.get('options') or {}
 
     # Call ``getTransactionsToApprove`` to locate trunk and branch
     # transactions so that we can attach the bundle to the Tangle.
-    gta_response = GetTransactionsToApproveCommand(self.adapter)(depth=depth)
+    kwargs = {
+      'depth': depth,
+    }
+    if options.get('reference') is not None:
+      kwargs['reference'] = options.get('reference')
+
+    gta_response = GetTransactionsToApproveCommand(self.adapter)(
+      **kwargs,
+    )
 
     att_response = AttachToTangleCommand(self.adapter)(
       branchTransaction   = gta_response.get('branchTransaction'),
@@ -61,15 +70,24 @@ class SendTrytesCommand(FilterCommand):
 
 class SendTrytesRequestFilter(RequestFilter):
   def __init__(self):
-    super(SendTrytesRequestFilter, self).__init__({
-      'depth': f.Required | f.Type(int) | f.Min(1),
+    super(SendTrytesRequestFilter, self).__init__(
+      {
+        'depth': f.Required | f.Type(int) | f.Min(1),
 
-      'trytes':
-          f.Required
-        | f.Array
-        | f.FilterRepeater(f.Required | Trytes(result_type=TransactionTrytes)),
+        'trytes':
+            f.Required
+          | f.Array
+          | f.FilterRepeater(f.Required | Trytes(result_type=TransactionTrytes)),
 
-      # Loosely-validated; testnet nodes require a different value than
-      # mainnet.
-      'minWeightMagnitude': f.Required | f.Type(int) | f.Min(1),
-    })
+        # Loosely-validated; testnet nodes require a different value than
+        # mainnet.
+        'minWeightMagnitude': f.Required | f.Type(int) | f.Min(1),
+
+        'options':
+          f.Type(dict),
+      },
+
+      allow_missing_keys = {
+        'options',
+      },
+    )

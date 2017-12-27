@@ -35,6 +35,7 @@ class SendTrytesRequestFilterTestCase(BaseFilterTestCase):
     request = {
       'depth':              100,
       'minWeightMagnitude': 18,
+      'options':            None,
 
       'trytes': [
         TransactionTrytes(self.trytes1),
@@ -71,6 +72,7 @@ class SendTrytesRequestFilterTestCase(BaseFilterTestCase):
       {
         'depth':              100,
         'minWeightMagnitude': 18,
+        'options':            None,
 
         'trytes': [
           TransactionTrytes(self.trytes1),

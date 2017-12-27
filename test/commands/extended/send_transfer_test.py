@@ -77,6 +77,7 @@ class SendTransferRequestFilterTestCase(BaseFilterTestCase):
       'depth':              100,
       'minWeightMagnitude': 18,
       'seed':               Seed(self.trytes2),
+      'options':            None,
 
       'inputs': [
         Address(self.trytes3),
@@ -128,6 +129,7 @@ class SendTransferRequestFilterTestCase(BaseFilterTestCase):
         'depth':              100,
         'minWeightMagnitude': 18,
         'seed':               Seed(self.trytes2),
+        'options':            None,
 
         'inputs': [
           Address(self.trytes3),
@@ -163,6 +165,7 @@ class SendTransferRequestFilterTestCase(BaseFilterTestCase):
       {
         'changeAddress':      None,
         'inputs':             None,
+        'options':            None,
 
         'depth':              100,
         'minWeightMagnitude': 13,

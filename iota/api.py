@@ -347,8 +347,8 @@ class StrictIota(with_metaclass(ApiMeta)):
     """
     return core.GetTipsCommand(self.adapter)()
 
-  def get_transactions_to_approve(self, depth):
-    # type: (int) -> dict
+  def get_transactions_to_approve(self, depth, reference=None):
+    # type: (int, Optional[TransactionHash]) -> dict
     """
     Tip selection which returns ``trunkTransaction`` and
     ``branchTransaction``.
@@ -364,7 +364,10 @@ class StrictIota(with_metaclass(ApiMeta)):
     References:
       - https://iota.readme.io/docs/gettransactionstoapprove
     """
-    return core.GetTransactionsToApproveCommand(self.adapter)(depth=depth)
+    return core.GetTransactionsToApproveCommand(self.adapter)(
+      depth     = depth,
+      reference = reference,
+    )
 
   def get_trytes(self, hashes):
     # type: (Iterable[TransactionHash]) -> dict
@@ -836,8 +839,10 @@ class Iota(StrictIota):
       inputs                = None,
       change_address        = None,
       min_weight_magnitude  = None,
+      seed                  = None,
+      options               = None,
   ):
-    # type: (int, Iterable[ProposedTransaction], Optional[Iterable[Address]], Optional[Address], Optional[int]) -> dict
+    # type: (int, Iterable[ProposedTransaction], Optional[Iterable[Address]], Optional[Address], Optional[int], Optional[TrytesCompatible], Optional[Dict]) -> dict
     """
     Prepares a set of transfers and creates the bundle, then attaches
     the bundle to the Tangle, and broadcasts and stores the
@@ -880,13 +885,20 @@ class Iota(StrictIota):
     if min_weight_magnitude is None:
       min_weight_magnitude = self.default_min_weight_magnitude
 
+    if seed is None:
+      seed = self.seed
+
+    if options is None:
+      options = {}
+
     return extended.SendTransferCommand(self.adapter)(
-      seed                = self.seed,
+      seed                = seed,
       depth               = depth,
       transfers           = transfers,
       inputs              = inputs,
       changeAddress       = change_address,
       minWeightMagnitude  = min_weight_magnitude,
+      options             = options,
     )
 
   def send_trytes(self, trytes, depth, min_weight_magnitude=None):
